@@ -1,6 +1,6 @@
 package com.github.rgafiyatullin.owl_akka_goodies.actor_future
 
-import akka.actor.{Actor, Stash}
+import akka.actor.{Actor, ActorLogging, Stash}
 import com.github.rgafiyatullin.owl_akka_goodies.util.Ref
 
 import scala.concurrent.Future
@@ -13,11 +13,14 @@ object ActorFuture {
   final case class UnexpectedFailure(reason: Throwable) extends Throwable {
     override def getCause = reason
   }
-
 }
 
-trait ActorFuture extends Actor with Stash {
-  private implicit lazy val executionContext = context.dispatcher
+trait ActorFuture extends Actor with Stash with ActorLogging {
+  private implicit lazy val executionContext = {
+    // force initialization of ActorLogging._log prior to mapping Futures
+    val _ = log
+    context.dispatcher
+  }
 
   object future {
     def handle[T: ClassTag]
