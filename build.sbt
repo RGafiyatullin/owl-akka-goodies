@@ -8,6 +8,13 @@ val akkaVersion = "2.4.2"
 
 scalacOptions in ThisBuild ++= Seq("-unchecked", "-deprecation")
 
+publishTo := {
+  val nexus = "http://nexus.in-docker.localhost:8081/"
+  Some("releases"  at nexus + "content/repositories/releases")
+}
+credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
+
+
 libraryDependencies ++= Seq(
   "org.scalatest"       %% "scalatest"        % "2.2.6",
 
