@@ -1,0 +1,6 @@
+/.env
+logs/*.log*
+target
+/.idea
+RUNNING_PID
+.sbtserver
