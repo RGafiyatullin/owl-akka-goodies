@@ -9,6 +9,13 @@ object TerminatorApi extends ActorApiObject[TerminatorApi] {
 
   override def create(initArgs: InitArgs, name: String)(implicit arf: ActorRefFactory): TerminatorApi =
     TerminatorApi(arf.actorOf(Props(classOf[TerminatorActor], initArgs), name))
+
+  object requests {
+    final case class AddOnBeforeShutdown(f: () => Unit)
+  }
 }
 
-final case class TerminatorApi(actor: ActorRef) extends ActorApi
+final case class TerminatorApi(actor: ActorRef) extends ActorApi {
+  def addOnBeforeShutdown(f: () => Unit): Unit =
+    actor ! TerminatorApi.requests.AddOnBeforeShutdown(f)
+}
