@@ -1,9 +1,9 @@
 package com.github.rgafiyatullin.owl_akka_goodies.terminator
 
-import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, Terminated}
+import akka.actor.{Actor, ActorLogging, Terminated}
 import com.github.rgafiyatullin.owl_akka_goodies.terminator.terminator_actor.TerminatorData
 
-class TerminatorActor(topSup: ActorRef, actorSystem: ActorSystem) extends Actor with ActorLogging {
+class TerminatorActor(args: TerminatorApi.InitArgs) extends Actor with ActorLogging {
   // force initialization of ActorLogging._log
   private val _ = log
 
@@ -13,14 +13,14 @@ class TerminatorActor(topSup: ActorRef, actorSystem: ActorSystem) extends Actor 
     case TerminatorApi.requests.AddOnBeforeShutdown(f) =>
       context become whenReady(data.appendOnBeforeShutdown(f))
 
-    case Terminated(`topSup`) =>
+    case Terminated(args.watchFor) =>
       log.info("TopSup is dead. About to execution PreShutdown actions...")
       data.beforeShutdown.foreach(beforeShutdownAction => beforeShutdownAction())
-      log.info("TopSup is dead. Shutting the ActorSystem[{}] down...", actorSystem.name)
-      actorSystem.terminate()
+      log.info("TopSup is dead. Shutting the ActorSystem[{}] down...", args.systemToShut.name)
+      args.systemToShut.terminate()
   }
 
   override def receive: Receive = whenReady(init())
 
-  context watch topSup
+  context watch args.watchFor
 }

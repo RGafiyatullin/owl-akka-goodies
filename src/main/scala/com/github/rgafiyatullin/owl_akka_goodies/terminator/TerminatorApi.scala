@@ -1,10 +1,10 @@
 package com.github.rgafiyatullin.owl_akka_goodies.terminator
 
-import akka.actor.{ActorRef, ActorRefFactory, Props}
+import akka.actor.{ActorRef, ActorRefFactory, ActorSystem, Props}
 import com.github.rgafiyatullin.owl_akka_goodies.actor_api.{ActorApi, ActorApiObject}
 
 object TerminatorApi extends ActorApiObject[TerminatorApi] {
-  final case class InitArgs(watchFor: ActorRef)
+  final case class InitArgs(watchFor: ActorRef, systemToShut: ActorSystem)
   override val defaultActorName = "terminator"
 
   override def create(initArgs: InitArgs, name: String)(implicit arf: ActorRefFactory): TerminatorApi =
