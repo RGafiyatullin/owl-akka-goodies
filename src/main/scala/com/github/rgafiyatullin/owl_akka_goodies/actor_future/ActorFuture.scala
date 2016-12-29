@@ -37,7 +37,7 @@ trait ActorFuture extends Actor with Stash with ActorLogging {
           unstashAll()
           val successTyped = success.asInstanceOf[Try[T]]
           if (handleWith.isDefinedAt(successTyped))
-            handleWith(successTyped)
+            context become handleWith(successTyped)
           else
             throw ActorFuture.UnexpectedSuccess(value)
 
@@ -45,7 +45,7 @@ trait ActorFuture extends Actor with Stash with ActorLogging {
           unstashAll()
           val failureTyped = failure.asInstanceOf[Try[T]]
           if (handleWith.isDefinedAt(failureTyped))
-            handleWith(failureTyped)
+            context become handleWith(failureTyped)
           else
             throw ActorFuture.UnexpectedFailure(reason)
 

@@ -2,7 +2,7 @@
 name := "owl-akka-goodies"
 
 organization := "com.github.rgafiyatullin"
-version := "0.1.2"
+version := "0.1.3"
 
 scalaVersion in ThisBuild := "2.11.8"
 val akkaVersion = "2.4.2"
