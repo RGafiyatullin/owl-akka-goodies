@@ -33,7 +33,7 @@ trait ActorFuture extends Actor with Stash with ActorLogging {
       futureValue.onComplete(me ! (ref, _))
 
       PartialFunction[Any, Unit] {
-        case (`ref`, success @ Success(value)) if classTag[T].runtimeClass.isInstance(value) =>
+        case (`ref`, success @ Success(value)) =>
           unstashAll()
           val successTyped = success.asInstanceOf[Try[T]]
           if (handleWith.isDefinedAt(successTyped))
