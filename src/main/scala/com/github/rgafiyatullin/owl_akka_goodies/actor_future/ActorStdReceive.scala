@@ -3,7 +3,7 @@ package com.github.rgafiyatullin.owl_akka_goodies.actor_future
 import akka.actor.{Actor, ActorLogging}
 
 object ActorStdReceive {
-  final case class UnexpectedMessageReceived(message: Any) extends Throwable
+  final case class UnexpectedMessageReceived(message: Any) extends Exception
 }
 
 trait ActorStdReceive extends Actor with ActorLogging {

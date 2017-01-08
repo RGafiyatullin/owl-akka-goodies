@@ -8,9 +8,9 @@ import scala.reflect.{ClassTag, classTag}
 import scala.util.{Failure, Success, Try}
 
 object ActorFuture {
-  final case class UnexpectedSuccess[T](value: T) extends Throwable
+  final case class UnexpectedSuccess[T](value: T) extends Exception
 
-  final case class UnexpectedFailure(reason: Throwable) extends Throwable {
+  final case class UnexpectedFailure(reason: Throwable) extends Exception {
     override def getCause = reason
   }
 }
