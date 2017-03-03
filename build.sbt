@@ -2,7 +2,7 @@
 name := "owl-akka-goodies"
 
 organization := "com.github.rgafiyatullin"
-version := "0.1.5"
+version := "0.1.6"
 
 scalaVersion in ThisBuild := "2.11.8"
 val akkaVersion = "2.4.2"
@@ -21,11 +21,7 @@ libraryDependencies ++= Seq(
 
   "org.joda"            % "joda-convert"      % "1.7",
   "joda-time"           % "joda-time"         % "2.9.3",
-  "com.typesafe.akka"   %% "akka-actor"       % akkaVersion,
-  "com.typesafe.akka"   %% "akka-slf4j"       % akkaVersion,
-  // "ch.qos.logback"      %  "logback-classic"  % "1.1.3",
-  "com.google.inject"   %  "guice"            % "4.0-beta5",
-  "net.codingwell"      %% "scala-guice"      % "4.0.0-beta5"
+  "com.typesafe.akka"   %% "akka-actor"       % akkaVersion
 )
 
 lazy val owlAkkaGoodies =
