@@ -10,8 +10,8 @@ val akkaVersion = "2.4.2"
 scalacOptions in ThisBuild ++= Seq("-unchecked", "-deprecation")
 
 publishTo := {
-  val nexus = "http://nexus.in-docker.localhost:8081/"
-  Some("releases"  at nexus + "content/repositories/releases")
+  val nexus = "http://am3-v-perftest-xmppcs-1.be.core.pw:8081/"
+  Some("releases"  at nexus + "content/repositories/sbt-releases")
 }
 credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
 
