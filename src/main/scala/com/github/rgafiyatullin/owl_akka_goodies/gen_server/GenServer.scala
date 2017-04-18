@@ -146,10 +146,12 @@ trait GenServer[Args, State] extends Actor with ActorFuture with ActorStdReceive
         receiveInfo(state) orElse
         stdReceive.discard
 
-    def onError(reason: Throwable, state: State): Nothing = {
-      Try(terminate(reason, state))
-      throw reason
-    }
+    def onError(reason: Throwable, state: State): Receive =
+      future.handle(terminate(reason, state)) {
+        case _ =>
+          throw reason
+      }
+
 
     def processHandleCallResult(replyTo: ReplyTo, handleCallResult: HandleCallResult[State]): Receive =
       handleCallResult match {
@@ -169,7 +171,7 @@ trait GenServer[Args, State] extends Actor with ActorFuture with ActorStdReceive
           stdReceive.discard
 
         case HandleCallResult.WrapShutdownError(shutdownError) =>
-          throw shutdownError.reason
+          onError(shutdownError.reason, shutdownError.state)
 
         case HandleCallResult.WrapBecome(become) =>
           become.receive
@@ -182,7 +184,7 @@ trait GenServer[Args, State] extends Actor with ActorFuture with ActorStdReceive
           stdReceive.discard
 
         case HandleCastResult.WrapShutdownError(shutdownError) =>
-          throw shutdownError.reason
+          onError(shutdownError.reason, shutdownError.state)
 
         case HandleCastResult.WrapNoReply(noReply) =>
           whenReady(noReply.state)
@@ -198,7 +200,7 @@ trait GenServer[Args, State] extends Actor with ActorFuture with ActorStdReceive
           stdReceive.discard
 
         case HandleInfoResult.WrapShutdownError(shutdownError) =>
-          throw shutdownError.reason
+          onError(shutdownError.reason, shutdownError.state)
 
         case HandleInfoResult.WrapNoReply(noReply) =>
           whenReady(noReply.state)
@@ -219,7 +221,7 @@ trait GenServer[Args, State] extends Actor with ActorFuture with ActorStdReceive
 
               case Failure(reason) =>
                 replyTo.failure(reason)
-                throw reason
+                onError(reason, state)
             }
           } else {
             val reason = GenServer.UnexpectedCall(request)
@@ -241,7 +243,7 @@ trait GenServer[Args, State] extends Actor with ActorFuture with ActorStdReceive
                 processHandleCastResult(handleCastResult)
 
               case Failure(reason) =>
-                throw reason
+                onError(reason, state)
             }
           } else {
             log.warning("Unexpected cast: {}", request)
@@ -263,7 +265,7 @@ trait GenServer[Args, State] extends Actor with ActorFuture with ActorStdReceive
               processHandleInfoResult(handleInfoResult)
 
             case Failure(reason) =>
-              throw reason
+              onError(reason, state)
           }
       }
   }
@@ -271,12 +273,14 @@ trait GenServer[Args, State] extends Actor with ActorFuture with ActorStdReceive
 
   def init(args: Args): Future[State]
 
-  def handleCall(replyTo: ReplyTo, state: State): PartialFunction[Any, Future[HandleCallResult[State]]] = Map.empty
+  type HandleCall = PartialFunction[Any, Future[HandleCallResult[State]]]
+  type HandleCast = PartialFunction[Any, Future[HandleCastResult[State]]]
+  type HandleInfo = PartialFunction[Any, Future[HandleInfoResult[State]]]
 
-  def handleCast(state: State): PartialFunction[Any, Future[HandleCastResult[State]]] = Map.empty
+  def handleCall(replyTo: ReplyTo, state: State): HandleCall = Map.empty
+  def handleCast(state: State): HandleCast = Map.empty
+  def handleInfo(state: State): HandleInfo = Map.empty
 
-  def handleInfo(state: State): PartialFunction[Any, Future[HandleInfoResult[State]]] = Map.empty
-
-  def terminate(reason: Throwable, state: State): Unit = ()
+  def terminate(reason: Throwable, state: State): Future[Unit] = Future.successful(())
 
 }
