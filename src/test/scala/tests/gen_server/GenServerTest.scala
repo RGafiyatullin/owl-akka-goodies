@@ -50,14 +50,16 @@ class GenServerTest extends FlatSpec with Matchers with ScalaFutures {
   val actorSystem = ActorSystem("test-gen-server")
 
   "GenServer" should "initialize" in {
+    import GenServer.implicits.GenServerActorRef
+
     val gs1 = actorSystem.actorOf(Props(classOf[GenServerTest.GenServerImpl1], GenServerTest.GenServerImpl1.Args()))
-    GenServer.call(gs1, 1).mapTo[Unit]
-    GenServer.cast(gs1, 2)
+    gs1.call(1).mapTo[Unit]
+    gs1.cast(2)
     gs1 ! 3
 
-    GenServer.cast(gs1, "dump_state")
+    gs1.cast("dump_state")
 
-    whenReady(GenServer.call(gs1, 1).mapTo[Unit])(identity)
+    whenReady(gs1.call(1).mapTo[Unit])(identity)
     whenReady(actorSystem.terminate())(identity)
     ()
   }

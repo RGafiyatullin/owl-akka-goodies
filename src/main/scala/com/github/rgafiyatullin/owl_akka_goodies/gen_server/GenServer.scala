@@ -105,6 +105,20 @@ object GenServer {
     implicit def handleInfoResultFromShutdownOk[State](from: ShutdownOk[State]): HandleInfoResult[State] = HandleInfoResult.WrapShutdownOk(from)
     implicit def handleInfoResultFromShutdownError[State](from: ShutdownError[State]): HandleInfoResult[State] = HandleInfoResult.WrapShutdownError(from)
     implicit def handleInfoResultFromBecome[State](from: Become): HandleInfoResult[State] = HandleInfoResult.WrapBecome(from)
+
+    implicit class GenServerActorRef(actorRef: ActorRef) {
+
+      def call(request: Any)(implicit timeout: Timeout): Future[Any] =
+        GenServer.call(actorRef, request)
+
+      def cast(request: Any): Unit =
+        GenServer.cast(actorRef, request)
+
+      object genServerDebug {
+
+      }
+
+    }
   }
 }
 
