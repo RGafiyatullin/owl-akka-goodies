@@ -9,6 +9,8 @@ import scala.collection.immutable.Queue
 import scala.concurrent.{ExecutionContext, Future}
 
 object PluginSystem {
+  import scala.language.existentials
+
   sealed trait Pending
   final case class PendingEvent(event: Event) extends Pending
   final case class PendingQuery(pluginKey: PluginKey, query: Query[_]) extends Pending

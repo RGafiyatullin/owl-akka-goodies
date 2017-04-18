@@ -1,9 +1,10 @@
 package com.github.rgafiyatullin.owl_akka_goodies.terminator
 
 import akka.actor.{Actor, ActorLogging, Terminated}
+import com.github.rgafiyatullin.owl_akka_goodies.actor_future.{ActorFuture, ActorStdReceive}
 import com.github.rgafiyatullin.owl_akka_goodies.terminator.terminator_actor.TerminatorData
 
-class TerminatorActor(args: TerminatorApi.InitArgs) extends Actor with ActorLogging {
+class TerminatorActor(args: TerminatorApi.InitArgs) extends Actor with ActorStdReceive with ActorLogging {
   // force initialization of ActorLogging._log
   private val _ = log
 
@@ -18,6 +19,7 @@ class TerminatorActor(args: TerminatorApi.InitArgs) extends Actor with ActorLogg
       data.beforeShutdown.foreach(beforeShutdownAction => beforeShutdownAction())
       log.info("TopSup is dead. Shutting the ActorSystem[{}] down...", args.systemToShut.name)
       args.systemToShut.terminate()
+      context become stdReceive.discard
   }
 
   override def receive: Receive = whenReady(init())
