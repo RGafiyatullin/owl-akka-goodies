@@ -2,10 +2,10 @@
 name := "owl-akka-goodies"
 
 organization := "com.github.rgafiyatullin"
-version := "0.1.8.1"
+version := "0.1.9"
 
 scalaVersion in ThisBuild := "2.11.8"
-val akkaVersion = "2.4.2"
+val akkaVersion = "2.5.4"
 
 scalacOptions in ThisBuild ++= Seq("-unchecked", "-deprecation")
 
